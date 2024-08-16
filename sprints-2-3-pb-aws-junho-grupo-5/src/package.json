@@ -1,0 +1,14 @@
+{
+  "name": "nba-api-app",
+  "version": "1.0.0",
+  "description": "API da NBA em Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}
