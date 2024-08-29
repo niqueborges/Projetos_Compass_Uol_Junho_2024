@@ -1,17 +1,11 @@
-# Usar uma imagem base do Python
-FROM python:3.9-slim
+FROM python:3.8-slim
 
-# Definir o diretório de trabalho dentro do container
 WORKDIR /app
 
-# Copiar os arquivos de código e de modelo para o container
-COPY . /app
+COPY requirements.txt .
 
-# Instalar as dependências da API
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Expor a porta para a API
-EXPOSE 8000
+COPY . .
 
-# Comando para rodar a API usando Uvicorn
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "app.py"]
