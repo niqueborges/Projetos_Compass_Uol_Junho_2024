@@ -213,12 +213,27 @@ Este projeto é licenciado sob a [Licença MIT](src/LICENSE).
 ---
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="Python" height="30" width="40">
-  <img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS" height="30" width="40">
+   <img src="https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white"
+alt="Fastapi" height="30" width="40">
+  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"
+alt="Flask" height="30" width="40">  
+  <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white"
+alt="Amazon_AWS" height="30" width="40">  
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"
+alt="Github" height="30" width="40">  
+  <img src="https://img.shields.io/badge/Trello-0052CC?style=for-the-badge&logo=trello&logoColor=white"
+alt="Trello" height="30" width="40"> 
+  <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"
+alt="Python" height="30" width="40">
+  <img src="https://img.shields.io/badge/Pandas-2C2D72?style=for-the-badge&logo=pandas&logoColor=white"
+alt="Pandas" height="30" width="40">
   <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" height="30" width="40">
 </div>
 
 Este README foi preparado para garantir que todos os aspectos do projeto sejam claros e bem documentados, alinhando-se às melhores práticas recomendadas pelo programa de bolsas da Compass UOL e AWS.
+
+--- 
+
 
 --- 
 
