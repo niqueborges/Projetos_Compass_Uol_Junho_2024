@@ -144,31 +144,40 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
 ```plaintext
 src/
 │
-├── models/
-│   ├── model.pkl
-│   ├── xgboost-model.pkl
-│   └── (outros modelos, se houver)
-│
-├── data/
-│   └── (tabelas de dados, por exemplo `dados.csv`, `dataset.json`)
-│
-├── scripts/
-│   ├── main.py                 # Script principal para execução
-│   ├── previsoes.py            # Script para geração de previsões
-│   ├── converte_csv.py         # Script para conversão de dados
-│   ├── train_model.py          # Script para treinamento de modelo (antes era "modelo_de_trem.py")
-│   └── validacao_de_dados.py   # Script para validação dos dados
-│
-├── config/
-│   ├── Dockerfile              # Arquivo de configuração do Docker
+├── assets/                            # Recursos visuais e outros assets
+│   ├── dataset_schema.png
+│   └── sprint4-5.jpg
+├── config/                            # Configurações e arquivos relacionados
 │   ├── .dockerignore
 │   ├── .gitignore
-│   ├── LICENSE
-│   ├── requirements.txt        # Arquivo de dependências Python
-│   └── accuracy.txt            # Arquivo de precisão do modelo (antes era "precisão.txt")
-│
-└── docs/
-    └── (documentação, como README, manuais, etc.)
+│   ├── accuracy.txt
+│   ├── dockerfile                     # Dockerfile movido para config
+│   └── requirements.txt               # Dependências do projeto
+├── data/                              # Conjuntos de dados utilizados no projeto
+│   ├── raw/                           # Dados brutos
+│   │   └── Hotel Reservations.csv
+│   ├── processed/                     # Dados processados
+│   │   └── Hotel Reservations Quantif.csv
+├── models/                            # Modelos e scripts relacionados a modelos
+│   ├── kernel_svm.py
+│   ├── logistic_regression.py
+│   ├── random_forest_classification.py
+│   ├── xg_boost.py
+│   ├── xgboost-model/                 # Modelo treinado e outros artefatos
+│   ├── XGBoostSage.ipynb
+│   └── model.pkl                      # Arquivo do modelo salvo
+├── scripts/                           # Scripts e pipelines de processamento
+│   ├── data_processing/               # Scripts relacionados ao processamento de dados
+│   │   └── converte_csv.py
+│   ├── training/                      # Scripts relacionados ao treinamento do modelo
+│   │   └── train_model.py
+│   ├── inference/                     # Scripts para inferência e previsões
+│   │   ├── main.py
+│   │   └── previsoes.py
+├── LICENSE                            # Licença do projeto
+└── README.md                          # Documentação do projeto
+
+
 
 ```
 
