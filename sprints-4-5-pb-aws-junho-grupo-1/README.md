@@ -217,4 +217,3 @@ Este README foi preparado para garantir que todos os aspectos do projeto sejam c
 
 --- 
 
-Espero que esta versão atenda às suas expectativas e deixe o README mais organizado e profissional!
