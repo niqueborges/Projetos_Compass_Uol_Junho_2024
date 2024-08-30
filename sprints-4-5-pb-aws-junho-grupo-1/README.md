@@ -1,7 +1,3 @@
-Aqui está uma versão aprimorada do seu README para o projeto "Avaliação de Custo de Hospedagem":
-
----
-
 # **Avaliação de Custo de Hospedagem** 
 
 ## **👥 Desenvolvedores**
