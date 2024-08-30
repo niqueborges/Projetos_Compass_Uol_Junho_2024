@@ -1,48 +1,220 @@
-# Nome Projeto
+Aqui está uma versão aprimorada do seu README para o projeto "Avaliação de Custo de Hospedagem":
 
-Descreva como configurar e executar o ambiente.
-Inclua detalhes sobre o treinamento do modelo, API e deployment.
-Relate quaisquer dificuldades e como foram resolvidas.
-Documente como utilizar o sistema e qualquer configuração adicional necessária.
+---
 
-## Desenvolvedores
+# **Avaliação de Custo de Hospedagem** 
 
-- [Monique da Silva Borges](https://github.com/niqueborges)
+## **👥 Desenvolvedores**
+
 - [Marcel Dupret Lopes Barbosa](https://github.com/MarcelDBarbosa)
+- [Monique da Silva Borges](https://github.com/niqueborges)
 - [Erick](https://github.com/Erick8874)
 
+---
 
-## Estrutura do Projeto
+## **📑 Índice**
+- [📈 Status do Projeto](#-status-do-projeto)
+- [✨ Funcionalidades](#-funcionalidades)
+- [⚙️ Arquitetura e Fluxo de Trabalho](#-arquitetura-e-fluxo-de-trabalho)
+- [🗃️ Banco de Dados](#-banco-de-dados)
+- [⚙️ Variáveis de Ambiente](#-variáveis-de-ambiente)
+- [📦 Como Rodar a Aplicação](#-como-rodar-a-aplicação)
+- [🚀 Deploy](#-deploy)
+- [💻 Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [📂 Estrutura de Diretórios](#-estrutura-de-diretórios)
+- [📐 Padrões Utilizados](#-padrões-utilizados)
+- [📅 Metodologia de Desenvolvimento](#-metodologia-de-desenvolvimento)
+- [😿 Principais Dificuldades](#-principais-dificuldades)
+- [📝 Licença](#-licença)
 
-- `Dockerfile`: Define como construir a imagem Docker da aplicação.
-- `docker-compose.yml`: Facilita o gerenciamento dos contêineres Docker.
-- `README.md`: Este arquivo contém informações sobre o projeto, como usá-lo e sua estrutura.
+---
 
-## Tecnologias Utilizadas
+## **📈 Status do Projeto**
+🚀 **Status:** Finalizado
 
-- Docker
-- AWS
+O projeto de Avaliação de Custo de Hospedagem está completo e o modelo de machine learning foi implantado em produção. A API está operacional e acessível conforme o planejado nas sprints 4 e 5 do programa de bolsas.
 
-## Funcionalidades
+---
 
-## Como Usar
+## **✨ Funcionalidades**
+1. **Treinamento do Modelo**: 
+   - Utilização do AWS SageMaker para treinar um modelo de machine learning que classifica reservas de hotel em diferentes faixas de preço.
 
-## Etapas do Projeto
+2. **API de Inferência**:
+   - Desenvolvida utilizando Flask/FastAPI, a API carrega o modelo treinado do S3 e realiza inferências em tempo real com os dados fornecidos.
 
-## Licença
+3. **Deploy na AWS**:
+   - A API foi implantada utilizando serviços da AWS, como EC2, Lambda e API Gateway, para garantir alta disponibilidade e escalabilidade.
 
-Este projeto é licenciado sob a Licença MIT. Veja o arquivo [LICENSE](src/LICENSE) para mais detalhes.
+4. **Persistência de Dados**:
+   - O conjunto de dados é armazenado no AWS RDS e o modelo é armazenado no S3.
 
+5. **Infraestrutura como Código**:
+   - Dockerfile disponível para containerização e scripts para facilitar o deploy da aplicação.
+
+---
+
+## **⚙️ Arquitetura e Fluxo de Trabalho**
+1. **Pré-processamento e Treinamento do Modelo**:
+   - Os dados são pré-processados para criar a coluna `label_avg_price_per_room`, que classifica as reservas. O modelo é então treinado no AWS SageMaker e armazenado no S3.
+
+2. **API de Inferência**:
+   - A API carrega o modelo treinado do S3 e oferece um endpoint POST `/api/v1/inference` para inferências baseadas nos dados de reserva.
+
+3. **Deploy**:
+   - A aplicação foi implantada em uma instância EC2 da AWS, com configuração de segurança apropriada para tráfego HTTP/HTTPS.
+
+---
+
+## **🗃️ Banco de Dados**
+- **AWS RDS**: Usado para armazenar tanto o conjunto de dados original quanto o processado.
+- Para rodar localmente, é necessário configurar um banco de dados no AWS RDS e obter as credenciais de conexão.
+
+---
+
+## **⚙️ Variáveis de Ambiente**
+Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
+
+| Variável         | Descrição                                      | Exemplo                                                      |
+|------------------|------------------------------------------------|--------------------------------------------------------------|
+| `AWS_ACCESS_KEY` | Chave de acesso da AWS                         | `EXAMPLE1234567890`                                          |
+| `AWS_SECRET_KEY` | Chave secreta da AWS                           | `exampleSecretKey1234567890`                                 |
+| `S3_BUCKET_NAME` | Nome do bucket S3 onde o modelo está armazenado | `hotel-reservations-models`                                  |
+| `RDS_CONNECTION` | String de conexão para o AWS RDS               | `host=hostname user=username password=password dbname=dbname`|
+
+---
+
+## **📦 Como Rodar a Aplicação**
+
+### **Utilizando Docker:**
+1. **Clone o repositório:**
+   ```bash
+   git clone -b grupo-1 https://github.com/Compass-pb-aws-2024-JUNHO/sprints-4-5-pb-aws-junho.git
+   ```
+
+2. **Crie a imagem Docker para a API:**
+   ```bash
+   docker build -t hotel-reservations-api .
+   ```
+
+3. **Execute o container Docker:**
+   ```bash
+   docker run -p 80:5000 hotel-reservations-api
+   ```
+
+### **Sem Docker:**
+1. **Clone o repositório:**
+   ```bash
+   git clone -b grupo-1 https://github.com/Compass-pb-aws-2024-JUNHO/sprints-4-5-pb-aws-junho.git
+   ```
+
+2. **Instale as dependências:**
+   ```bash
+   pip install -r api/requirements.txt
+   ```
+
+3. **Execute a aplicação:**
+   ```bash
+   python api/app.py
+   ```
+
+   - Acesse a API em: `http://localhost:5000/api/v1/inference`
+
+---
+
+## **🚀 Deploy**
+### **AWS EC2**:
+1. Crie uma instância EC2 na região us-east-1.
+2. Conecte-se via SSH à instância e instale o Docker.
+3. Faça o pull da imagem Docker e execute o container.
+4. Configure o security group para permitir tráfego HTTP/HTTPS.
+
+---
+
+## **💻 Tecnologias Utilizadas**
+- **Python**
+- **AWS S3**
+- **AWS RDS**
+- **AWS SageMaker**
+- **Flask**
+- **FastAPI**
+- **Docker**
+- **Git**
+
+---
+
+## **📂 Estrutura de Diretórios**
+
+```plaintext
+src/
+│
+├── models/
+│   ├── model.pkl
+│   ├── xgboost-model.pkl
+│   └── (outros modelos, se houver)
+│
+├── data/
+│   └── (tabelas de dados, por exemplo `dados.csv`, `dataset.json`)
+│
+├── scripts/
+│   ├── main.py                 # Script principal para execução
+│   ├── previsoes.py            # Script para geração de previsões
+│   ├── converte_csv.py         # Script para conversão de dados
+│   ├── train_model.py          # Script para treinamento de modelo (antes era "modelo_de_trem.py")
+│   └── validacao_de_dados.py   # Script para validação dos dados
+│
+├── config/
+│   ├── Dockerfile              # Arquivo de configuração do Docker
+│   ├── .dockerignore
+│   ├── .gitignore
+│   ├── LICENSE
+│   ├── requirements.txt        # Arquivo de dependências Python
+│   └── accuracy.txt            # Arquivo de precisão do modelo (antes era "precisão.txt")
+│
+└── docs/
+    └── (documentação, como README, manuais, etc.)
+
+```
+
+---
+
+## **📐 Padrões Utilizados**
+
+- **Commits Semânticos**: Todos os commits seguem o padrão de commits semânticos para manter o histórico do Git organizado.
+- **Estrutura de Pastas**: A estrutura do projeto é organizada por responsabilidade, separando a API, o modelo e outros componentes.
+
+---
+
+## **📅 Metodologia de Desenvolvimento**
+
+- **Scrum**: A metodologia Scrum foi aplicada utilizando o Trello para gerenciar as tarefas em sprints:
+
+  - **Sprint 1**: Pré-processamento e treinamento do modelo.
+  - **Sprint 2**: Desenvolvimento da API e Dockerização.
+  - **Sprint 3**: Deploy e validação do sistema.
+
+---
+
+## **😿 Principais Dificuldades**
+- **Configuração do SageMaker**: Lidar com grandes volumes de dados no AWS SageMaker.
+- **Otimização de Performance**: Melhorar o tempo de resposta da API durante o carregamento do modelo.
+
+---
+
+## **📝 Licença**
+
+Este projeto é licenciado sob a [Licença MIT](src/LICENSE).
+
+---
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="Python" height="30" width="40">
+  <img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" alt="AWS" height="30" width="40">
+  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" height="30" width="40">
 </div>
-<div style="display: inline_block"><br>
-  <img align="center" alt="PJ-Python" height="30" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg">
-</div>
-<div><br>
-  <img align="center" alt="Nique-Js" height="30" width="40"" src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white">
-  <img align="center" alt="Nique-Js" height="30" width="40" src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
-</div>
 
+Este README foi preparado para garantir que todos os aspectos do projeto sejam claros e bem documentados, alinhando-se às melhores práticas recomendadas pelo programa de bolsas da Compass UOL e AWS.
 
+--- 
 
-
-
+Espero que esta versão atenda às suas expectativas e deixe o README mais organizado e profissional!
