@@ -1,0 +1,48 @@
+<!-- Este código HTML cria um formulário simples de criação, consulta e exclusão de dados e inclui (link de pasta *.css) estilos CSS para melhorar a apresentação visual.-->
+<!-- O formulário possui campos para nome, data de nascimento, telefone e e-mail.-->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/stylessheet.css" media="screen" /> 
+    <title>Cadastro de clientes</title>
+</head>
+<body>
+    <h1>Cadastro de Clientes</h1>
+
+    <form id="formCadastro">
+        <fieldset>
+            <legend>Dados do Cliente</legend>
+            <div>
+                <label for="inome">Nome:</label>
+                <input type="text" id="inome" name="nome" required minlength="5" maxlength="30" placeholder="Nome completo">
+            </div>
+            <div>
+                <label for="dataNascimento">Data de Nascimento:</label>
+                <input type="date" id="dataNascimento" name="dataNascimento" required>
+            </div>
+            <div>
+                <label for="itel">Telefone:</label>
+                <input type="tel" id="itel" name="tel" autocomplete="tel" pattern="\([0-9]{2}\)[0-9]{4,5}-[0-9]{4}" placeholder="(99)99999-9999" required>
+            </div>
+            <div>
+                <label for="iemail">Email:</label>
+                <input type="email" id="iemail" name="email" required placeholder="exemplo@dominio.com">
+            </div>
+        </fieldset>
+        
+        <p>
+            <input type="submit" value="Cadastrar">
+            <input type="reset" value="Limpar">
+        </p>
+    </form>
+
+    <div id="listaCadastro">
+        <!-- Exibição da lista de cadastros -->
+    </div>
+
+    <script src="cadastro_clientes.js"></script>
+</body>
+</html>
