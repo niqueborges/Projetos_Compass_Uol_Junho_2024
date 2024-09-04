@@ -2,10 +2,8 @@
 
 ## **👥 Desenvolvedores**
 
-- [Marcel Dupret Lopes Barbosa](https://github.com/MarcelDBarbosa)
-- [Monique da Silva Borges](https://github.com/niqueborges)
-- [Erick](https://github.com/Erick8874)
-
+| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/173844994?v=4" width="115" alt="Erick Felix de Oliveira">](https://github.com/Erick8874) <br>[*Erick Felix de Oliveira](https://github.com/Erick8874) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/173863078?v=4" width="115" alt="Marcel Barbosa">](https://github.com/MarcelDBarbosa) <br>[Marcel Barbosa](https://github.com/MarcelDBarbosa) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/95103547?v=4" width="115" alt="Monique da Silva Borges">](https://github.com/niqueborges) <br>[Monique da Silva Borges*](https://github.com/niqueborges) |
+|:---:|:---:|:---:|
 ---
 
 ## **📑 Índice**
@@ -51,11 +49,65 @@ O projeto de Avaliação de Custo de Hospedagem está completo e o modelo de mac
 ---
 
 ## **⚙️ Arquitetura e Fluxo de Trabalho**
+
+<div style="display: flex;">
+<img alt="estrutura" title="#estrutura" src="./src/assets/sprint4-5.jpg" style="margin-right: 10px;">
+
+
 1. **Pré-processamento e Treinamento do Modelo**:
-   - Os dados são pré-processados para criar a coluna `label_avg_price_per_room`, que classifica as reservas. O modelo é então treinado no AWS SageMaker e armazenado no S3.
+   - Os dados são pré-processados para criar a coluna `label_avg_price_per_room`, que classifica as reservas.
+ 
+   - Se o preço for <=85 é definida como categoria 1, se o preço for >85 e <=115 é definida como categoria 2, se o preço for >115 é definida como categoria 3.
+
+   - As colunas que continham valores textuais foram convertidas para valores inteiros. A coluna `type_of_meal_plan` teve a seguinte codificação: "Not Selected" foi trocado por 0, "Meal Plan 1" por 1, "Meal Plan 2" por 2 e "Meal Plan 3" por 3. A coluna `room_type_reserved` teve os valores alterados de "Room_Type 1" para 1, "Room_Type 2" para 2, e assim para todos os tipos de quartos. A coluna `market_segment_type` foi transformada seguindo as relações "Offline" = 0, "Online" = 1, "Corporate" = 2, "Complementary" = 3 e "Aviation" = 4.
+
+   - As colunas que continham valores textuais foram convertidas para valores inteiros. A coluna `type_of_meal_plan` teve a seguinte codificação: "Not Selected" foi trocado por 0, "Meal Plan 1" por 1, "Meal Plan 2" por 2 e "Meal Plan 3" por 3. Foi convertido para um banco de dados do tipo Mysql e foi armazenado no AWS RDS; O modelo é então treinado no AWS SageMaker e armazenado no S3.
 
 2. **API de Inferência**:
-   - A API carrega o modelo treinado do S3 e oferece um endpoint POST `/api/v1/inference` para inferências baseadas nos dados de reserva.
+   - A API carrega o modelo treinado do S3 e oferece um endpoint POST [3.225.170.35/api/v1/inference](http://3.225.170.35/api/v1/inference/) para inferências baseadas nos dados de reserva.
+   - No corpo do POST as informações passadas devem seguir o seguinte exemplo:
+
+    {
+
+    "no_of_adults": 1,
+
+    "no_of_childrens": 0,
+
+    "no_of_weekend_nights": 1,
+
+    "no_of_week_nights": 2,
+
+    "type_of_meal_plan": "Meal Plan 1",
+
+    "required_car_parking_space": 0,
+
+    "room_type_reserved": "Room_Type 2",
+
+    "lead_time": 34,
+
+    "arrival_year": 2018,
+
+    "arrival_month": 10,
+
+    "arrival_date": 15,
+
+    "market_segment_type": "Online",
+
+    "repeated_guest": 0,
+
+    "no_of_previous_cancellations": 0,
+
+    "no_of_previous_bookings_1": 0,
+
+    "no_of_special_requests": 0
+
+ 
+}
+
+  <div style="display: flex;">
+<img alt="tela" title="#tela" src="./src/assets/tela.png" style="margin-right: 10px;">
+
+     
 
 3. **Deploy**:
    - A aplicação foi implantada em uma instância EC2 da AWS, com configuração de segurança apropriada para tráfego HTTP/HTTPS.
@@ -64,19 +116,18 @@ O projeto de Avaliação de Custo de Hospedagem está completo e o modelo de mac
 
 ## **🗃️ Banco de Dados**
 - **AWS RDS**: Usado para armazenar tanto o conjunto de dados original quanto o processado.
-- Para rodar localmente, é necessário configurar um banco de dados no AWS RDS e obter as credenciais de conexão.
+- Para rodar localmente no MySQLWorkbench é necessário configurar um banco de dados no AWS RDS e obter as credenciais de conexão.
 
 ---
 
 ## **⚙️ Variáveis de Ambiente**
-Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
+Para configurar o ambiente de desenvolvimento, crie um arquivo `credentials` no `subdiretório` ~/.aws/ e adicione as seguintes variáveis:
 
-| Variável         | Descrição                                      | Exemplo                                                      |
-|------------------|------------------------------------------------|--------------------------------------------------------------|
-| `AWS_ACCESS_KEY` | Chave de acesso da AWS                         | `EXAMPLE1234567890`                                          |
-| `AWS_SECRET_KEY` | Chave secreta da AWS                           | `exampleSecretKey1234567890`                                 |
-| `S3_BUCKET_NAME` | Nome do bucket S3 onde o modelo está armazenado | `hotel-reservations-models`                                  |
-| `RDS_CONNECTION` | String de conexão para o AWS RDS               | `host=hostname user=username password=password dbname=dbname`|
+| Variável                | Descrição                                       | Exemplo                                                      |
+|-------------------------|-------------------------------------------------|--------------------------------------------------------------|
+| `aws_access_key_id`     | Chave de acesso da AWS                          | EXAMPLE1234567890                                            |
+| `aws_secret_access_key` | Chave secreta da AWS                            | exampleSecretKey1234567890                                   |
+| `aws_session_token`     | Token da Sessão                                 | VzLWVhc3QtMSJHMEUCIQD3ySmuWiopvch0oF77RpXa/VWE               |                      
 
 ---
 
@@ -98,6 +149,11 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
    docker run -p 80:5000 hotel-reservations-api
    ```
 
+4. **Ou baixando diretamente a imagem**
+   ```bash
+   docker pull marceldupret/hotel:latest
+   ```
+
 ### **Sem Docker:**
 1. **Clone o repositório:**
    ```bash
@@ -109,12 +165,16 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
    pip install -r api/requirements.txt
    ```
 
-3. **Execute a aplicação:**
+3. **Mudar o diretório:**
    ```bash
-   python api/app.py
+   cd /src/scripts/inference 
+   ```
+4. **Execute a aplicação:**
+   ```bash
+   uvicorn main:app --host 0.0.0.0 --port 80
    ```
 
-   - Acesse a API em: `http://localhost:5000/api/v1/inference`
+   - Acesse a API em: `http://localhost/api/v1/inference`
 
 ---
 
@@ -123,7 +183,7 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
 1. Crie uma instância EC2 na região us-east-1.
 2. Conecte-se via SSH à instância e instale o Docker.
 3. Faça o pull da imagem Docker e execute o container.
-4. Configure o security group para permitir tráfego HTTP/HTTPS.
+4. Criar o arquivo de credenciais com as informações descritas na sessão Variáveis de Ambiente.
 
 ---
 
@@ -132,7 +192,7 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
 - **AWS S3**
 - **AWS RDS**
 - **AWS SageMaker**
-- **Flask**
+- **AWS EC2**
 - **FastAPI**
 - **Docker**
 - **Git**
@@ -144,36 +204,28 @@ Para configurar o ambiente de desenvolvimento, crie um arquivo `.env` na raiz do
 ```plaintext
 src/
 │
+├──_pycache_/
+│   ├── main.cpython-311.pyc
 ├── assets/                            # Recursos visuais e outros assets
-│   ├── dataset_schema.png
-│   └── sprint4-5.jpg
-├── config/                            # Configurações e arquivos relacionados
-│   ├── .dockerignore
-│   ├── .gitignore
-│   ├── accuracy.txt
-│   ├── dockerfile                     # Dockerfile movido para config
-│   └── requirements.txt               # Dependências do projeto
+│   ├── sprint4-5.jpg
+│   └── tela.png
 ├── data/                              # Conjuntos de dados utilizados no projeto
+├── processed/                         # Dados processados
+│   │   └── Hotel Reservations Quantif.csv
 │   ├── raw/                           # Dados brutos
 │   │   └── Hotel Reservations.csv
-│   ├── processed/                     # Dados processados
-│   │   └── Hotel Reservations Quantif.csv
-├── models/                            # Modelos e scripts relacionados a modelos
-│   ├── kernel_svm.py
-│   ├── logistic_regression.py
-│   ├── random_forest_classification.py
-│   ├── xg_boost.py
-│   ├── xgboost-model/                 # Modelo treinado e outros artefatos
-│   ├── XGBoostSage.ipynb
-│   └── model.pkl                      # Arquivo do modelo salvo
 ├── scripts/                           # Scripts e pipelines de processamento
 │   ├── data_processing/               # Scripts relacionados ao processamento de dados
 │   │   └── converte_csv.py
-│   ├── training/                      # Scripts relacionados ao treinamento do modelo
-│   │   └── train_model.py
-│   ├── inference/                     # Scripts para inferência e previsões
+    ├── inference/                     # Scripts para inferência e previsões
 │   │   ├── main.py
 │   │   └── previsoes.py
+│   ├── training/                      # Scripts relacionados ao treinamento do modelo
+│   │   └── XGBoostSage.ipynb   
+├── .dockerignore
+├── .gitignore
+├── dockerfile                         # Definição do Docker
+├── requirements.txt                   # Dependências do projeto
 ├── LICENSE                            # Licença do projeto
 └── README.md                          # Documentação do projeto
 
@@ -186,7 +238,7 @@ src/
 ## **📐 Padrões Utilizados**
 
 - **Commits Semânticos**: Todos os commits seguem o padrão de commits semânticos para manter o histórico do Git organizado.
-- **Estrutura de Pastas**: A estrutura do projeto é organizada por responsabilidade, separando a API, o modelo e outros componentes.
+- **Estrutura de Pastas**: A estrutura do projeto é organizada por responsabilidade, separando por `processamento de dados`, `treinamento de modelo` e `inferência`.
 
 ---
 
@@ -196,27 +248,27 @@ src/
 
   - **Sprint 1**: Pré-processamento e treinamento do modelo.
   - **Sprint 2**: Desenvolvimento da API e Dockerização.
-  - **Sprint 3**: Deploy e validação do sistema.
+  - **Sprint 3**: Deploy, validação do sistema e escrita do Readme.
 
 ---
 
 ## **😿 Principais Dificuldades**
-- **Configuração do SageMaker**: Lidar com grandes volumes de dados no AWS SageMaker.
-- **Otimização de Performance**: Melhorar o tempo de resposta da API durante o carregamento do modelo.
+- **Implantação da RDS**: As dificuldades são vários detalhes de configuração de VPC, grupos de segurança e regras.
+- **Configuração do SageMaker**: Leitura dos dados no RDS.
+- **Leitura do modelo no S3**: As regras de segurança não permitem fazer o download do arquivo.
+- **Acesso dos dados do S3 no EC2**: Configuração das credenciais.
 
 ---
 
 ## **📝 Licença**
 
-Este projeto é licenciado sob a [Licença MIT](src/LICENSE).
+Este projeto é licenciado sob a [Licença MIT](LICENSE).
 
 ---
 
 <div align="center">
    <img src="https://img.shields.io/badge/fastapi-109989?style=for-the-badge&logo=FASTAPI&logoColor=white"
 alt="Fastapi" height="30" width="40">
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"
-alt="Flask" height="30" width="40">  
   <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white"
 alt="Amazon_AWS" height="30" width="40">  
   <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"
@@ -235,5 +287,7 @@ Este README foi preparado para garantir que todos os aspectos do projeto sejam c
 --- 
 
 
---- 
+
+
+
 

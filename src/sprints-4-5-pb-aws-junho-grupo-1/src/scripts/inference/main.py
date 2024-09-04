@@ -1,60 +1,81 @@
+# Importar as bibliotecas
 from fastapi import FastAPI, HTTPException
+import previsoes as p
 from pydantic import BaseModel
-import pandas as pd
-import pickle
-import os
+import numpy as np
 
+# Cria o servidor
 app = FastAPI()
 
-# Função para carregar o modelo
-def load_model():
-    model_path = 'model.pkl'
-    if not os.path.exists(model_path):
-        raise HTTPException(status_code=500, detail="Modelo não encontrado!")
-    with open(model_path, 'rb') as file:
-        model = pickle.load(file)
-    return model
+# Define o conjunto de dados de entrada da API
+class Entradas(BaseModel):
+    no_of_adults: int
+    no_of_childrens: int
+    no_of_weekend_nights: int
+    no_of_week_nights: int
+    type_of_meal_plan: str
+    required_car_parking_space: int
+    room_type_reserved: str
+    lead_time: int
+    arrival_year: int
+    arrival_month: int
+    arrival_date: int
+    market_segment_type: str
+    repeated_guest: int
+    no_of_previous_cancellations: int
+    no_of_previous_bookings_1: int
+    no_of_special_requests: int
 
-# Função para carregar a precisão
-def load_accuracy():
-    accuracy_path = 'accuracy.txt'
-    if not os.path.exists(accuracy_path):
-        raise HTTPException(status_code=500, detail="Precisão não encontrada!")
-    with open(accuracy_path, 'r') as file:
-        accuracy = file.read().strip()
-    return accuracy
+# Funções para conversão dos valores de entrada do tipo string para int
+def comida(valor):
+    match valor:
+        case "Meal Plan 1": return 1
+        case "Meal Plan 2": return 2
+        case "Meal Plan 3": return 3
+        case _: return 0
 
-# Carregar o modelo ao iniciar a aplicação
-try:
-    model = load_model()
-except Exception as e:
-    raise HTTPException(status_code=500, detail=f"Erro ao carregar o modelo: {str(e)}")
+def quarto(valor):
+    match valor:
+        case "Room_Type 1": return 1
+        case "Room_Type 2": return 2
+        case "Room_Type 3": return 3
+        case "Room_Type 4": return 4
+        case "Room_Type 5": return 5
+        case "Room_Type 6": return 6
+        case "Room_Type 7": return 7
+        case _: return 0
 
-# Definir o modelo de entrada para a previsão
-class PredictionInput(BaseModel):
-    feature1: float
-    feature2: float
-    feature3: float
+def segmento(valor):
+    match valor:
+        case "Offline": return 0
+        case "Online": return 1
+        case "Corporate": return 2
+        case "Complementary": return 3
+        case "Aviation": return 4
+        case _: return 5
 
-@app.post("/predict")
-def predict(input_data: PredictionInput):
-    data = pd.DataFrame([input_data.dict()])
+# Função para converter formato JSON em array
+def converte(dados: Entradas):
+    lista = np.array([[
+        dados.no_of_adults, dados.no_of_childrens, dados.no_of_weekend_nights, dados.no_of_week_nights, 
+        comida(dados.type_of_meal_plan), dados.required_car_parking_space, quarto(dados.room_type_reserved), 
+        dados.lead_time, dados.arrival_year, dados.arrival_month, dados.arrival_date, 
+        segmento(dados.market_segment_type), dados.repeated_guest, dados.no_of_previous_cancellations, 
+        dados.no_of_previous_bookings_1, dados.no_of_special_requests
+    ]])
+    return lista
+
+# Rota para o POST
+@app.post("/api/v1/inference")
+def infer(data: Entradas):
     try:
-        # Fazer a previsão
-        prediction = model.predict(data)
-        return {"prediction": int(prediction[0])}
+        entrada = converte(data)
+        inferencia = p.previsao(entrada)     
+        return {"result": inferencia}
     except Exception as e:
-        # Tratar e registrar erros
-        raise HTTPException(status_code=400, detail=f"Erro ao fazer a previsão: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Entrada de dados incorreta: {str(e)}")
 
+# Rota para o GET    
 @app.get("/")
-def read_root():
-    return {"message": "API está funcionando"}
-
-@app.get("/accuracy")
-def get_accuracy():
-    try:
-        accuracy = load_accuracy()
-        return {"accuracy": accuracy}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erro ao carregar a precisão: {str(e)}")
+def raiz():
+    return {"mensagem": "API está funcionando"}
