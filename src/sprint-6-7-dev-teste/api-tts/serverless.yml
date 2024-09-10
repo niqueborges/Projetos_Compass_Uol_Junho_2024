@@ -1,0 +1,35 @@
+service: api-tts
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: python3.9
+  environment:
+    BUCKET_NAME: ${env:BUCKET_NAME}
+    AUDIO_S3_DIR: ${env:AUDIO_S3_DIR}
+
+functions:
+  health:
+    handler: handler.health
+    events:
+      - httpApi:
+          path: /
+          method: get
+  v1Description:
+    handler: handler.v1_description
+    events:
+      - httpApi:
+          path: /v1
+          method: get
+  lambda_handler:
+    handler: handler.lambda_handler
+    timeout: 30
+    events:
+      - httpApi:
+          path: /v1/tts
+          method: post
+
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin

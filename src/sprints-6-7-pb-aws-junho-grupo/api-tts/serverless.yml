@@ -1,5 +1,5 @@
 service: api-tts
-frameworkVersion: '3'
+frameworkVersion: '4.2.5'
 
 provider:
   name: aws

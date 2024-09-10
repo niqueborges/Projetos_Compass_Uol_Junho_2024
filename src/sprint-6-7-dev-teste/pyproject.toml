@@ -1,0 +1,2 @@
+[tool.taskipy.tasks]
+run = "cd api-tts && serverless offline"
