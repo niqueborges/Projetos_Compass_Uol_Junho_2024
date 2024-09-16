@@ -83,6 +83,12 @@
         "LogGroupName": "/aws/lambda/api-tts-dev-v1Description"
       }
     },
+    "V1TTSLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/api-tts-dev-v1TTS"
+      }
+    },
     "IamRoleLambdaExecution": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -140,6 +146,16 @@
                       "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/api-tts-dev*:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "s3:PutObject",
+                    "polly:SynthesizeSpeech"
+                  ],
+                  "Resource": "*"
                 }
               ]
             }
@@ -168,13 +184,13 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/api-tts/dev/1725564683178-2024-09-05T19:31:23.178Z/api-tts.zip"
+          "S3Key": "serverless/api-tts/dev/1726512777616-2024-09-16T18:52:57.616Z/api-tts.zip"
         },
         "Handler": "handler.health",
         "Runtime": "python3.9",
         "FunctionName": "api-tts-dev-health",
-        "MemorySize": 1024,
-        "Timeout": 6,
+        "MemorySize": 128,
+        "Timeout": 30,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -193,13 +209,13 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/api-tts/dev/1725564683178-2024-09-05T19:31:23.178Z/api-tts.zip"
+          "S3Key": "serverless/api-tts/dev/1726512777616-2024-09-16T18:52:57.616Z/api-tts.zip"
         },
         "Handler": "handler.v1_description",
         "Runtime": "python3.9",
         "FunctionName": "api-tts-dev-v1Description",
-        "MemorySize": 1024,
-        "Timeout": 6,
+        "MemorySize": 128,
+        "Timeout": 30,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -211,24 +227,59 @@
         "V1DescriptionLogGroup"
       ]
     },
-    "HealthLambdaVersionnHganccfDezgeloilJkTCXoEdoWra1RSZYroL24ek": {
+    "V1TTSLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/api-tts/dev/1726512777616-2024-09-16T18:52:57.616Z/api-tts.zip"
+        },
+        "Handler": "handler.handle_request",
+        "Runtime": "python3.9",
+        "FunctionName": "api-tts-dev-v1TTS",
+        "MemorySize": 128,
+        "Timeout": 30,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "V1TTSLogGroup"
+      ]
+    },
+    "HealthLambdaVersionWTi2jLxOOLLDOdMVfCJ6ZZrj0CKLf0e1q1fv6qapU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "HealthLambdaFunction"
         },
-        "CodeSha256": "eVF8rFBAMhxy4yBx6O6yB3Kvna7eQ58NA3PfR8BMtI0="
+        "CodeSha256": "DjwEu/4APyD6fkMexA2r4QFL4qeqazF4idNhL5Qecck="
       }
     },
-    "V1DescriptionLambdaVersionpxxzUD0hVCHCCnejL0IN6LAPksvkttfnTaHPlU6kJ8": {
+    "V1DescriptionLambdaVersionnf50fotXhd1p1zY3wnmiRAB5gJRCjFV9uKJTFO41I": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "V1DescriptionLambdaFunction"
         },
-        "CodeSha256": "eVF8rFBAMhxy4yBx6O6yB3Kvna7eQ58NA3PfR8BMtI0="
+        "CodeSha256": "DjwEu/4APyD6fkMexA2r4QFL4qeqazF4idNhL5Qecck="
+      }
+    },
+    "V1TTSLambdaVersionkpOMSB12muYx4QDHSv1KOPrvXtLVsmPMuuVBE3EFec": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "V1TTSLambdaFunction"
+        },
+        "CodeSha256": "DjwEu/4APyD6fkMexA2r4QFL4qeqazF4idNhL5Qecck="
       }
     },
     "HttpApi": {
@@ -400,6 +451,81 @@
         }
       },
       "DependsOn": "HttpApiIntegrationV1Description"
+    },
+    "V1TTSLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "V1TTSLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationV1TTS": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "V1TTSLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostV1Tts": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /v1/tts",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationV1TTS"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationV1TTS"
     }
   },
   "Outputs": {
@@ -414,7 +540,7 @@
     "HealthLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "HealthLambdaVersionnHganccfDezgeloilJkTCXoEdoWra1RSZYroL24ek"
+        "Ref": "HealthLambdaVersionWTi2jLxOOLLDOdMVfCJ6ZZrj0CKLf0e1q1fv6qapU"
       },
       "Export": {
         "Name": "sls-api-tts-dev-HealthLambdaFunctionQualifiedArn"
@@ -423,10 +549,19 @@
     "V1DescriptionLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "V1DescriptionLambdaVersionpxxzUD0hVCHCCnejL0IN6LAPksvkttfnTaHPlU6kJ8"
+        "Ref": "V1DescriptionLambdaVersionnf50fotXhd1p1zY3wnmiRAB5gJRCjFV9uKJTFO41I"
       },
       "Export": {
         "Name": "sls-api-tts-dev-V1DescriptionLambdaFunctionQualifiedArn"
+      }
+    },
+    "V1TTSLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "V1TTSLambdaVersionkpOMSB12muYx4QDHSv1KOPrvXtLVsmPMuuVBE3EFec"
+      },
+      "Export": {
+        "Name": "sls-api-tts-dev-V1TTSLambdaFunctionQualifiedArn"
       }
     },
     "HttpApiId": {

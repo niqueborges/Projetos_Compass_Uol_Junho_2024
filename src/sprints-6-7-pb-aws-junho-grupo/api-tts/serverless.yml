@@ -1,9 +1,22 @@
 service: api-tts
+
 frameworkVersion: '4.2.5'
 
 provider:
   name: aws
-  runtime: python3.9
+  runtime: python3.9  # Use uma versão estável do Python que seja suportada pela AWS Lambda
+  region: us-east-1   # Defina a região desejada
+  memorySize: 128     # Memória alocada para as funções (em MB)
+  timeout: 30         # Timeout padrão (em segundos)
+  
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - s3:PutObject
+        - polly:SynthesizeSpeech
+      Resource: "*"
 
 functions:
   health:
@@ -12,10 +25,18 @@ functions:
       - httpApi:
           path: /
           method: get
+
   v1Description:
     handler: handler.v1_description
     events:
       - httpApi:
           path: /v1
           method: get
+
+  v1TTS:
+    handler: handler.handle_request
+    events:
+      - httpApi:
+          path: /v1/tts
+          method: post
 
