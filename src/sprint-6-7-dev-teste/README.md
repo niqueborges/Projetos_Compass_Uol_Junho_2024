@@ -1,375 +1,207 @@
-# **API TTS - Text-to-Speech**
+# Avaliação Sprints 6 e 7 - Programa de Bolsas Compass UOL e AWS - turma junho/2024
 
-## **👥 Desenvolvedores**
+Avaliação das sexta e sétima sprints do programa de bolsas Compass UOL para formação em machine learning para AWS.
 
+## Execução (Código Fonte)
 
----
+Crie uma API que irá capturar uma frase qualquer inserida pelo usuário e transformará essa frase em um audio em mp3 via polly. Após, crie um chatbot que se utilize da API criada.
 
-## **📑 Índice**
-- [📈 Status do Projeto](#-status-do-projeto)
-- [✨ Funcionalidades](#-funcionalidades)
-- [⚙️ Arquitetura e Fluxo de Trabalho](#-arquitetura-e-fluxo-de-trabalho)
-- [🗃️ Banco de Dados](#-banco-de-dados)
-- [⚙️ Variáveis de Ambiente](#-variáveis-de-ambiente)
-- [📦 Como Rodar a Aplicação](#-como-rodar-a-aplicação)
-- [🚀 Deploy](#-deploy)
-- [💻 Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [📂 Estrutura de Diretórios](#-estrutura-de-diretórios)
-- [📐 Padrões Utilizados](#-padrões-utilizados)
-- [📅 Metodologia de Desenvolvimento](#-metodologia-de-desenvolvimento)
-- [😿 Principais Dificuldades](#-principais-dificuldades)
-- [📝 Licença](#-licença)
+**Especificações**:
 
----
+A aplicação deverá ser desenvolvida com o framework 'serverless' e deverá seguir a estrutura que já foi desenvolvida neste repo.
 
-## **📈 Status do Projeto**
-🚀 **Status:** Em andamento.
+Passo a passo para iniciar o projeto:
 
-O projeto está em desenvolvimento, com a implementação da API de Text-to-Speech utilizando AWS Polly, DynamoDB, S3, e Lambdas gerenciados pelo Serverless Framework.
+1. Crie a branch para o seu grupo e efetue o clone
 
----
+2. Instale o framework serverless em seu computador. Mais informações [aqui](https://www.serverless.com/framework/docs/getting-started)
 
-## **✨ Funcionalidades**
-1. **Geração de Áudio a partir de Texto**: A API converte texto para áudio utilizando o Amazon Polly.
-2. **Verificação no DynamoDB**: Antes de gerar o áudio, a API verifica se a frase já foi convertida e armazenada anteriormente.
-3. **Armazenamento de Áudio no S3**: O áudio gerado é armazenado no Amazon S3, e a URL é retornada ao usuário.
-4. **Hashing**: A API gera um hash único para cada frase convertida, garantindo que áudios não sejam gerados duplicadamente para a mesma entrada.
-5. **API REST**: Disponibiliza endpoints HTTP para enviar frases e recuperar o áudio gerado.
-
----
-
-## **⚙️ Arquitetura e Fluxo de Trabalho**
-
-1. **Entrada de Texto**:
-   - O usuário faz uma requisição `POST` com uma frase para `/v1/tts`.
-   
-2. **Verificação no DynamoDB**:
-   - A frase é transformada em um hash, e o sistema verifica no **DynamoDB** se o hash já existe.
-   
-3. **Geração do Áudio**:
-   - Se o hash não existir, o texto é enviado para o **Amazon Polly**, que gera o áudio.
-   
-4. **Armazenamento no S3**:
-   - O áudio gerado é armazenado no **Amazon S3** e o DynamoDB é atualizado com o hash e a URL do áudio.
-   
-5. **Resposta**:
-   - A API retorna a URL do áudio junto com outras informações, como o hash da frase e um timestamp.
-
----
-
-## **🗃️ Banco de Dados**
-- **DynamoDB**: Usado para armazenar o hash das frases e suas respectivas URLs no S3. Cada registro contém:
-  - `unique_id`: O hash da frase.
-  - `phrase`: A frase original.
-  - `audio_url`: A URL do áudio gerado no S3.
-  - `timestamp`: Data e hora da criação.
-
----
-
-## **⚙️ Variáveis de Ambiente**
-Para configurar o ambiente de desenvolvimento, adicione as seguintes variáveis no arquivo `~/.aws/credentials`:
-
-| Variável                | Descrição                                       | Exemplo                                                      |
-|-------------------------|-------------------------------------------------|--------------------------------------------------------------|
-| `aws_access_key_id`     | Chave de acesso da AWS                          | EXAMPLE1234567890                                            |
-| `aws_secret_access_key` | Chave secreta da AWS                            | exampleSecretKey1234567890                                   |
-| `aws_session_token`     | Token da Sessão (caso necessário)               | EXAMPLETOKEN123456                                           |
-
----
-
-## **📦 Como Rodar a Aplicação**
-
-### **Usando Serverless Framework**:
-1. **Clone o repositório**:
-   ```bash
-   git clone https://github.com/usuario/api-tts.git
-   cd api-tts
-   ```
-
-2. **Instale as dependências**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Deploy da aplicação no AWS**:
-   ```bash
-   serverless deploy
-   ```
-
-4. **Teste a API localmente**:
-   ```bash
-   serverless invoke local --function v1Description
-   ```
-
----
-
-## **🚀 Deploy**
-O deploy é realizado com o Serverless Framework, que gerencia as funções Lambda, S3, Polly e DynamoDB no AWS.
-
-### **AWS Services Utilizados**:
-- **Lambda**: Para executar a lógica de conversão de texto para áudio.
-- **API Gateway**: Gerenciar endpoints HTTP da API.
-- **Polly**: Para gerar o áudio a partir do texto.
-- **DynamoDB**: Para armazenar as frases e URLs dos áudios.
-- **S3**: Para armazenar os arquivos de áudio gerados.
-
----
-
-## **💻 Tecnologias Utilizadas**
-- **Python 3.9**
-- **AWS Lambda**
-- **AWS Polly**
-- **AWS S3**
-- **AWS DynamoDB**
-- **Serverless Framework**
-- **Boto3 (SDK AWS para Python)**
-
----
-
-## **📂 Estrutura de Diretórios**
-
-```plaintext
-api-tts/
-│
-├── handler.py                 # Funções principais da Lambda
-├── requirements.txt           # Dependências do projeto Python
-├── serverless.yml             # Configuração do Serverless Framework
-├── utils/                     # Módulos utilitários para AWS (DynamoDB, Polly, S3)
-│   ├── dynamo_utils.py
-│   ├── polly_utils.py
-│   └── s3_utils.py
-├── tests/                     # Testes unitários
-│   ├── test_handler.py
-│   ├── test_dynamo_utils.py
-│   ├── test_polly_utils.py
-│   └── test_s3_utils.py
-└── README.md                  # Documentação do projeto
+```json
+npm install -g serverless
 ```
 
----
+3. Gere suas credenciais (AWS Acess Key e AWS Secret) na console AWS pelo IAM. Mais informações [aqui](https://www.serverless.com/framework/docs/providers/aws/guide/credentials/)
 
-## **📐 Padrões Utilizados**
+4. Em seguida insira as credenciais e execute o comando conforme exemplo:
 
-- **Commits Semânticos**: Os commits seguem o padrão semântico para manter o histórico do Git organizado.
-- **Modularização**: Código dividido em módulos (`utils/`) para facilitar a manutenção e testes.
-- **Serverless**: Utilização do Serverless Framework para gerenciar a infraestrutura.
+```json
+serverless config credentials \
+  --provider aws \
+  --key AKIAIOSFODNN7EXAMPLE \
+  --secret wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  ```
 
----
+Também é possivel configurar via [aws-cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) executando o comando:
 
-## **📅 Metodologia de Desenvolvimento**
-- **Scrum**: Utilizado para organizar as tarefas e o progresso do desenvolvimento em sprints no Trello.
+```json
+$ aws configure
+AWS Access Key ID [None]: AKIAIOSFODNN7EXAMPLE
+AWS Secret Access Key [None]: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+Default region name [None]: us-east-1
+Default output format [None]: ENTER
+  ```
 
----
+#### Observação
 
-## **😿 Principais Dificuldades**
-- **Configuração de Permissões AWS**: Configurar permissões adequadas para interação entre Polly, S3 e DynamoDB.
-- **Sincronização com o DynamoDB**: Garantir que as frases não sejam duplicadas com hashes diferentes.
-- **Limitação de Tamanho de Áudio do Polly**: Gerenciamento de frases muito longas.
+As credenciais devem ficar apenas localmente no seu ambiente. Nunca exponha as crendenciais no Readme ou qualquer outro ponto do código.
 
----
+Após executar as instruções acima, o serverless estará pronto para ser utilizado e poderemos publicar a solução na AWS.
 
-## **📝 Licença**
-Este projeto é licenciado sob a [Licença MIT](LICENSE).
+5. Para efetuar o deploy da solução na sua conta aws execute (acesse a pasta `api-tts`):
 
----
-
-<div align="center">
-   <img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python" height="30" width="40">
-   <img src="https://img.shields.io/badge/Amazon_AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white" alt="Amazon AWS" height="30" width="40">
-   <img src="https://img.shields.io/badge/Serverless-000000?style=for-the-badge&logo=serverless&logoColor=white" alt="Serverless" height="30" width="40">
-   <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" height="30" width="40">
-</div>
-
----
-
-Este README fornece uma visão geral e instruções completas para a configuração, deploy e utilização da API
-
-Aqui está o **README** reformulado para se adequar ao novo enunciado da Avaliação Sprints 6 e 7:
-
-# **Avaliação Sprints 6 e 7 - Programa de Bolsas Compass UOL e AWS - turma junho/2024**
-
-## **👥 Desenvolvedores**
-
-| [<img loading="lazy" src="https://avatars.githubusercontent.com/u/173844994?v=4" width="115" alt="Erick Felix de Oliveira">](https://github.com/Erick8874) <br>[*Erick Felix de Oliveira](https://github.com/Erick8874) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/173863078?v=4" width="115" alt="Marcel Barbosa">](https://github.com/MarcelDBarbosa) <br>[Marcel Barbosa](https://github.com/MarcelDBarbosa) | [<img loading="lazy" src="https://avatars.githubusercontent.com/u/95103547?v=4" width="115" alt="Monique da Silva Borges">](https://github.com/niqueborges) <br>[Monique da Silva Borges*](https://github.com/niqueborges) |
-|:---:|:---:|:---:|
-
----
-
-## **📑 Índice**
-- [📈 Status do Projeto](#-status-do-projeto)
-- [✨ Funcionalidades](#-funcionalidades)
-- [⚙️ Arquitetura e Fluxo de Trabalho](#-arquitetura-e-fluxo-de-trabalho)
-- [🗃️ Banco de Dados](#-banco-de-dados)
-- [⚙️ Variáveis de Ambiente](#-variáveis-de-ambiente)
-- [📦 Como Rodar a Aplicação](#-como-rodar-a-aplicação)
-- [🚀 Deploy](#-deploy)
-- [💻 Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [📂 Estrutura de Diretórios](#-estrutura-de-diretórios)
-- [📐 Padrões Utilizados](#-padrões-utilizados)
-- [📅 Metodologia de Desenvolvimento](#-metodologia-de-desenvolvimento)
-- [😿 Principais Dificuldades](#-principais-dificuldades)
-- [📝 Licença](#-licença)
-
----
-
-## **📈 Status do Projeto**
-🚀 **Status:** Em desenvolvimento
-
-Este projeto visa criar uma API para converter frases em áudio via AWS Polly e armazenar o resultado no S3. Posteriormente, um chatbot será desenvolvido usando Amazon Lex, utilizando essa API para enviar as respostas em áudio.
-
----
-
-## **✨ Funcionalidades**
-1. **API de Texto para Fala (TTS)**:
-   - Desenvolvida para receber frases via POST, gerar um hash único da frase, verificar no DynamoDB se o áudio já existe, e, se necessário, gerar um novo áudio usando o Polly e armazená-lo no S3.
-
-2. **Chatbot com Amazon Lex**:
-   - Um chatbot será desenvolvido para interagir com usuários, capturando informações e fornecendo respostas, com a opção de retorno em áudio.
-
-3. **Persistência de Dados**:
-   - Frases e metadados serão armazenados no DynamoDB e os arquivos de áudio no S3.
-
----
-
-## **⚙️ Arquitetura e Fluxo de Trabalho**
-
-1. **API de TTS**:
-   - Recebe uma frase e a transforma em um áudio. O hash da frase é usado como chave no DynamoDB para verificar se o áudio já foi gerado. Se não, o Polly cria o áudio, que é salvo no S3, e as referências são gravadas no DynamoDB.
-
-   Exemplo de POST para a API:
-   ```json
-   {
-     "phrase": "converta esse texto para áudio e salve uma referencia no dynamoDB."
-   }
-   ```
-
-   Resposta:
-   ```json
-   {
-     "received_phrase": "converta esse texto para áudio",
-     "url_to_audio": "https://meu-bucket/audio-xyz.mp3",
-     "created_audio": "02-02-2023 17:00:00",
-     "unique_id": "123456"
-   }
-   ```
-
-2. **Chatbot**:
-   - Desenvolvido com Amazon Lex, o chatbot usará intents para captar informações dos usuários. Ele será integrado à API TTS para fornecer respostas em áudio.
-
----
-
-## **🗃️ Banco de Dados**
-- **DynamoDB**: Usado para armazenar os hashes das frases e suas referências de áudio.
-- **S3**: Utilizado para armazenar os arquivos de áudio gerados pela API.
-
----
-
-## **⚙️ Variáveis de Ambiente**
-Para configurar o ambiente de desenvolvimento, crie o arquivo `credentials` no subdiretório `~/.aws/` com as variáveis:
-
-| Variável                | Descrição                                       | Exemplo                                                      |
-|-------------------------|-------------------------------------------------|--------------------------------------------------------------|
-| `aws_access_key_id`     | Chave de acesso da AWS                          | EXAMPLE1234567890                                            |
-| `aws_secret_access_key` | Chave secreta da AWS                            | exampleSecretKey1234567890                                   |
-| `aws_session_token`     | Token da Sessão                                 | exampleToken1234567890                                       |
-
----
-
-## **📦 Como Rodar a Aplicação**
-
-### **Pré-requisitos:**
-- Framework **Serverless** configurado.
-- **Credenciais AWS** geradas e configuradas no IAM.
-
-### **Passo a Passo:**
-
-1. **Clone o repositório e crie a branch para seu grupo:**
-   ```bash
-   git clone https://github.com/Compass-pb-aws-2024-JUNHO/sprints-6-7-pb-aws-junho.git
-   git checkout -b grupo-n
-   ```
-
-2. **Instale o framework Serverless**:
-   ```bash
-   npm install -g serverless
-   ```
-
-3. **Configure as credenciais AWS**:
-   ```bash
-   serverless config credentials --provider aws --key <AWS_ACCESS_KEY> --secret <AWS_SECRET_KEY>
-   ```
-
-4. **Execute o deploy da solução**:
-   ```bash
-   cd api-tts
-   serverless deploy
-   ```
-
-5. **Verifique os endpoints gerados** e teste as rotas, como `/v1/tts`, para transformar textos em áudio.
-
----
-
-## **🚀 Deploy**
-- A API será implantada usando **Serverless Framework** e **AWS Lambda**.
-- Os arquivos de áudio gerados serão armazenados em um bucket S3 público para a avaliação.
-
----
-
-## **💻 Tecnologias Utilizadas**
-- **Python**
-- **AWS Polly**
-- **AWS DynamoDB**
-- **AWS S3**
-- **Amazon Lex**
-- **Serverless Framework**
-- **Git**
-
----
-
-## **📂 Estrutura de Diretórios**
-
-```plaintext
-src/
-│
-├── assets/                             # Recursos visuais e outros assets
-│   ├── sprint6-7.jpg
-│
-├── api-tts/                            # Código da API TTS
-│   ├── handler.py                      # Funções Lambda da API
-│   └── serverless.yml                  # Configurações Serverless
-│
-└── chatbot/                            # Chatbot com Amazon Lex
-    ├── intents/                        # Configuração de intents do Lex
-    └── lambda/                         # Lambda de integração com TTS
+```
+serverless deploy
 ```
 
----
+Depois de efetuar o deploy, teremos um retorno semelhante a este:
 
-## **📐 Padrões Utilizados**
+```bash
+Deploying api-tts to stage dev (us-east-1)
 
-- **Serverless**: A estrutura foi baseada no framework Serverless para facilitar o deploy na AWS.
-- **Commits Semânticos**: Todos os commits seguem o padrão para manter o histórico do Git organizado.
+Service deployed to stack api-tts-dev (85s)
 
----
+endpoints:
+  GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
+  GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/v1
+functions:
+  health: api-tts-dev-health (2.1 kB)
+  v1Description: api-tts-dev-v1Description (2.1 kB)
+  v2Description: api-tts-dev-v2Description (2.1 kB)
+```
 
-## **📅 Metodologia de Desenvolvimento**
+6. Abra o browser e confirme que a solução está funcionando colando os 3 endpoints que deixamos como exemplo:
 
-- **Scrum**: Seguimos o framework Scrum para desenvolvimento, dividindo o projeto em duas sprints principais:
-  - **Sprint 6**: Desenvolvimento da API de TTS e deploy na AWS.
-  - **Sprint 7**: Integração do chatbot com Amazon Lex e conexão com a API TTS.
+### Rota 1 → Get /
 
----
+1. Esta rota já está presente no projeto.
+2. O retorno rota é:
 
-## **😿 Principais Dificuldades**
-- **Configuração do Serverless**: A integração entre o Serverless Framework e os serviços da AWS apresentou alguns desafios, principalmente na parte de autenticação e permissões.
+```json
+  {
+    "message": "Go Serverless v3.0! Your function executed successfully!",
+    "input": { 
+        ...(event)
+      }
+  }
+```
+
+3. Status code para sucesso da requisição será `200`.
+
+### Rota 2 → Get /v1
+
+1. Esta rota já está presente no projeto.
+2. O retorno rota é:
+
+```json
+  {
+    "message": "TTS api version 1."
+  }
+ 
+```
+
+3. Status code para sucesso da requisição será `200`.
 
 
----
+***
 
-## **📝 Licença**
+Após conseguir rodar o projeto base o objetivo final será divida em duas partes:
 
-Este projeto é licenciado sob a [Licença MIT](LICENSE).
+## Atividade -> Parte 1
 
----
+### Rota 3 -> Post /v1/tts
 
-Este README foi estruturado conforme as melhores práticas recomendadas no Programa de Bolsas Compass UOL e AWS.
+Deverá ser criada a rota `/v1/tts` que receberá um post no formato abaixo:
+
+```json
+  {
+    "phrase": "converta esse texto para áudio e salve uma referencia no dynamoDB. Caso a referencia já exista me devolva a URL com audio já gerado"
+  }
+```
+
+- Deverá ser criada uma lógica para que a frase recebida seja um id único (um _hash code_);
+- Esse hash será o atributo chave em nosso DynamoDB - exemplo: "Teste 123" será sempre o id "123456";
+- O texto da frase recebida deverá ser transformado em áudio via AWS Polly;
+- O áudio deverá ser armazenado em um bucket S3 (que deverá ser público, apenas para a nossa avaliação);
+- Deverá utilizar a lógica de _hash code_ para verificar se a frase já foi gerada anteriormente;
+- Caso o hash (_unique_id_) já exista no DynamoDB entregue o retorno conforme abaixo;
+- Caso não exista, faça a geração do áudio, grave no s3 e grave as referências no dynamoDB.
+
+Resposta a ser entregue:
+
+```json
+  {
+    "received_phrase": "converta esse texto para áudio",
+    "url_to_audio": "https://meu-buckect/audio-xyz.mp3",
+    "created_audio": "02-02-2023 17:00:00",
+    "unique_id": "123456"
+  }
+```
+
+Exemplos de referência:
+
+- <https://github.com/hussainanjar/polly-lambda> (Python)
+- <https://github.com/serverless/examples/tree/v3/aws-python-http-api-with-dynamodb> (Python)
+
+***
+
+## Atividade -> Parte 2
+
+Com base na [Documentação Amazon Lex](https://compasso-my.sharepoint.com/:f:/g/personal/lucas_sousa_compasso_com_br/Eph8d9BDeRhGhBzyoAYRLZUBhfjA54P1-5YHERGaN5_Osg?e=1ibFDI), crie um chatbot utilizando o Amazon Lex V2 e o conecte a uma plataforma de mensageria.
+
+**Especificações**:
+
+- Função do chatbot é de livre escolha do desenvolvedor;
+- Conexões: O chatbot deve ser disponibilizado em uma das seguintes plataformas:  
+  - Slack - [Conexão Slack](https://docs.aws.amazon.com/pt_br/lex/latest/dg/slack-bot-association.html);  
+  - Web - [Web](https://github.com/aws-samples/aws-lex-web-ui);
+- Construção:
+  - Intents:
+    - O chatbot deve possuir ao menos 4 intents distintas;  
+  - Slots:
+    - Captação de informações presentes no texto;
+    - Solicitação de informações quando o slot não for reconhecido;
+    - Confirmação de informações;
+    - O chatbot deve captar ao menos 3 slots no decorrer do fluxo;
+- O chatbot deve utilizar-se de menu com botões (Response Cards);
+- Tratamento de erros (fallback);
+- Deve ter a opção de enviar a resposta em áudio, utilizando o texto de resposta do chatbot, com uso da API da Parte 1 deste trabalho;
+- (Opcional) Uso de conditional branching para controle de fluxos ([Doc Conditional Branching](https://docs.aws.amazon.com/pt_br/lexv2/latest/dg/paths-branching.html));
+
+Ao final, a arquitetura a ser implantada deverá estar assim:
+
+![post-v3-tts](./assets/sprints6-7.jpg)
+
+***
+
+## O que será avaliado?
+
+- Projeto em produção na AWS;
+- Em python conforme projeto base disponibilizado;
+- Infra-estrutura como codigo;
+- Seguir as atividades na ordem proposta;
+- Sobre as rotas:
+  - Possuir a rota com o retorno esperado (somente campos solicitados conforme especificação);
+- Entendimento do chatbot e o que ele soluciona;
+- Criatividade em relação ao tema escolhido para o desenvolvimento do chatbot;
+- Intents e slots criados e informações que eles se dispõem a obter;
+- Organização:  
+  - Estrutura de intenções;  
+  - Estrutura da lógica de negócio;  
+  - Divisão de responsabilidades da equipe;  
+  - Funcionalidade do chatbot;
+- Objetividade do README.md.
+
+***
+
+## Entrega
+
+- **O trabalho deve ser feito em grupos de três ou quatro pessoas**;
+  - Evitar repetições de grupos da sprint anterior;
+- Criar uma branch no repositório com o formato grupo-número (Exemplo: grupo-1);
+- Subir o trabalho na branch com um Readme.md:
+  - Documentar detalhes sobre como a avaliação foi desenvolvida;
+  - Dificuldades conhecidas;
+  - Como utilizar o sistema;
+  - **Export do bot Lex em formato .zip**;
+- 🔨 código fonte desenvolvido (observar estruturas de pastas);
+- O prazo de entrega é até às 14h do dia 30/09/2024 no repositório do github (https://github.com/Compass-pb-aws-2024-JUNHO/sprints-6-7-pb-aws-junho).

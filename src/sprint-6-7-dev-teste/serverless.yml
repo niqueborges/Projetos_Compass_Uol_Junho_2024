@@ -1,0 +1,67 @@
+service: api-tts
+frameworkVersion: '4'
+
+provider:
+  name: aws
+  runtime: python3.9
+  environment:
+    BUCKET_NAME: ${env:BUCKET_NAME}
+    AUDIO_S3_DIR: ${env:AUDIO_S3_DIR}
+    DB_TABLE_NAME: ${env:DB_TABLE_NAME}
+    DB_PART_KEY: ${env:DB_PART_KEY}
+    
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "polly:*"
+        - "s3:*"
+        - "s3-object-lambda:*"
+        - "dynamodb:*"
+      Resource: "*"
+
+functions:
+  health:
+    handler: api_tts.handler.health.health
+    events:
+      - httpApi:
+          path: /
+          method: get
+          # response:
+          #   headers:
+          #     Content-Type: "'application/json'"
+          # template:
+          #   application/json: |
+          #     {
+          #       "status": "$input.path('$.status')",
+          #       "message": "$input.path('$.message')"
+          #     }
+  v1Description:
+    handler: api_tts.handler.v1_description.v1_description
+    events:
+      - httpApi:
+          path: /v1
+          method: get
+  lambda_handler:
+    handler: api_tts.handler.lambda_handler.lambda_handler
+    timeout: 40
+    events:
+      - httpApi:
+          path: /v1/tts
+          method: post
+  list:
+    handler: api_tts.aws.dynamodb.list_items_db.list_item_db
+    events:
+      - httpApi:
+          path: /v1/listdb
+          method: get
+  delete:
+    handler: api_tts.aws.dynamodb.delete_record_db.delete_record
+    events:
+      - httpApi:
+          path: /v1/deletedb/{id}
+          method: delete
+
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin

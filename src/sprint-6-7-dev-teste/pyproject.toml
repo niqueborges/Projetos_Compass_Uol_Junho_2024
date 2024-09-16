@@ -1,2 +1,8 @@
 [tool.taskipy.tasks]
-run = "cd api-tts && serverless offline"
+aws = "python -c \"from api_tts.aws.credentials.aws_credentials_check import main; main()\""
+
+run = "task aws && serverless offline"
+
+deploy = "task aws && serverless deploy"
+
+clean-cache = "python -c \"from api_tts.tasks.clean import clean_cache; clean_cache()\""
