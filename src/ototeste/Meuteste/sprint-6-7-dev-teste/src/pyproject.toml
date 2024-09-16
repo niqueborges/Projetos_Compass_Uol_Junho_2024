@@ -1,3 +1,0 @@
-[tool.taskipy.tasks]
-run = "serverless offline"
-clean-cache = "python -c \"from api_tts.tasks.clean import clean_cache; clean_cache()\""
